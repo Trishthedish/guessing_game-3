@@ -1,0 +1,55 @@
+<script type="text/javascript">
+	var getBirthYear = function () {
+		var birthYear =  "";
+		while (birthYear.length != 4 || isNaN(birthYear)) {
+			birthYear = prompt("What year were you born? (ex: 1989)");
+		}
+		return birthYear;
+	}
+
+	var getBirthMonth = function () {
+		var birthMonth = "";
+		while (birthMonth.length < 1 || birthMonth.length > 2 || isNaN(birthMonth)) {
+			birthMonth = prompt("What number month were you born? (ex: 10)");
+		}
+		return birthMonth;
+	}
+
+	var getBirthDate = function () {
+		var birthDate = "";
+		while (birthDate.length < 1 || birthDate.length > 2 || isNaN(birthDate)) {
+			birthDate = prompt("What day of the month were you born? (ex: 29)");
+		}
+		return birthDate;
+	}
+
+	var birthDate = new Date();
+	birthDate.setFullYear(getBirthYear());
+	birthDate.setMonth(getBirthMonth());
+	birthDate.setDate(getBirthDate());
+
+	var currentDate = new Date();
+
+	var daysAlive =  Math.floor((Date.parse(currentDate) - Date.parse(birthDate)) / 86400000);
+	
+	var fullMoons = Math.floor(daysAlive / 29.530588853);
+
+	var guess = "";
+
+	while (guess != fullMoons || guess > fullMoons + 10 || guess < fullMoons - 1) {
+		if (guess.length == 0) {
+			guess = prompt("About how many full moons have there been since you were born?");
+		} else if (guess > fullMoons + 10) {
+			guess = prompt("That's too high, guess again.");
+		} else if (guess < fullMoons - 10) {
+			guess = prompt("That's too low, guess again.");
+		}
+	}
+
+	if (guess == fullMoons) {
+		alert("That's the same number we estimated! Way to go.");
+	} else {
+		alert("That's close enough. We estimated " + fullMoons.toString() + ". Way to go!");
+	}
+
+</script>
