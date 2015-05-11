@@ -36,13 +36,15 @@
 
 	var guess = "";
 
-	while (guess != fullMoons || guess > fullMoons + 10 || guess < fullMoons - 1) {
+	while (guess != fullMoons || guess > fullMoons + 10 || guess < fullMoons - 10) {
 		if (guess.length == 0) {
 			guess = prompt("About how many full moons have there been since you were born?");
 		} else if (guess > fullMoons + 10) {
 			guess = prompt("That's too high, guess again.");
 		} else if (guess < fullMoons - 10) {
 			guess = prompt("That's too low, guess again.");
+		} else {
+			break;
 		}
 	}
 
