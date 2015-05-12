@@ -38,16 +38,19 @@
   while (guess > fullMoons + 10 || guess < fullMoons - 10) {
     if (guess.length == 0) {
       guess = prompt("Ok, take a guess: about how many full moons have there been since you were born?");
-    } else if (guess > fullMoons + 10) {
+    }
+    else if (guess > fullMoons + 10) {
       guess = prompt("That's too high, guess again.");
-    } else if (guess < fullMoons - 10) {
+    }
+    else if (guess < fullMoons - 10) {
       guess = prompt("That's too low, guess again.");
     }
   }
 
   if (guess == fullMoons) {
     alert("That's the same number we estimated! Way to go.");
-  } else {
+  }
+  else {
     alert("That's close enough. We estimated " + fullMoons.toString() + ". Way to go!");
   }
 
