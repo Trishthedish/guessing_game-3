@@ -23,6 +23,8 @@
 		return birthDate;
 	}
 
+	alert("Think you can guess how many full moons there have been since you were born? Just answer a few questions, and give it a try!")
+
 	var birthDate = new Date();
 	birthDate.setFullYear(getBirthYear());
 	birthDate.setMonth(getBirthMonth());
@@ -38,7 +40,7 @@
 
 	while (guess != fullMoons || guess > fullMoons + 10 || guess < fullMoons - 10) {
 		if (guess.length == 0) {
-			guess = prompt("About how many full moons have there been since you were born?");
+			guess = prompt("Ok, take a guess: about how many full moons have there been since you were born?");
 		} else if (guess > fullMoons + 10) {
 			guess = prompt("That's too high, guess again.");
 		} else if (guess < fullMoons - 10) {
