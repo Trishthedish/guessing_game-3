@@ -26,28 +26,23 @@
 	alert("Think you can guess how many full moons there have been since you were born? Just answer a few questions, and give it a try!")
 
 	var birthDate = new Date();
+	var currentDate = new Date();
 	birthDate.setFullYear(getBirthYear());
 	birthDate.setMonth(getBirthMonth());
 	birthDate.setDate(getBirthDate());
 
-	var currentDate = new Date();
-
 	var daysAlive =  Math.floor((Date.parse(currentDate) - Date.parse(birthDate)) / 86400000);
-	
 	var fullMoons = Math.floor(daysAlive / 29.530588853);
-
 	var guess = "";
 
-	while (guess != fullMoons || guess > fullMoons + 10 || guess < fullMoons - 10) {
+	while (guess > fullMoons + 10 || guess < fullMoons - 10) {
 		if (guess.length == 0) {
 			guess = prompt("Ok, take a guess: about how many full moons have there been since you were born?");
 		} else if (guess > fullMoons + 10) {
 			guess = prompt("That's too high, guess again.");
 		} else if (guess < fullMoons - 10) {
 			guess = prompt("That's too low, guess again.");
-		} /* else {
-			break;
-		} */
+		}
 	}
 
 	if (guess == fullMoons) {
