@@ -1,30 +1,58 @@
 <script type="text/javascript">
-  var getBirthYear = function () {
-    var birthYear =  "";
-    while (birthYear.length != 4 || isNaN(birthYear)) {
-      birthYear = prompt("What year were you born? (ex: 1989)");
+  var currentDate = new Date();
+
+  // This function finds the year the user provided.
+  var getUserYear = function () {
+    var userYear =  "";
+    while (userYear.length != 4 || isNaN(userYear) || userYear > currentDate.getFullYear()) {
+      userYear = prompt("What year do you choose? (ex: 1989)");
     }
-    return birthYear;
+    return userYear;
   }
 
-  var getBirthMonth = function () {
-    var birthMonth = "";
-    while (birthMonth.length < 1 || birthMonth.length > 2 || isNaN(birthMonth)) {
-      birthMonth = prompt("What number month were you born? (ex: 10)");
+  // This function finds the month the user provided.
+  var getUserMonth = function () {
+    var userMonth = "";
+    while (userMonth.length < 1 || userMonth.length > 2 || isNaN(userMonth) || userMonth > 12) {
+      userMonth = prompt("What number month do you choose? (ex: 10)");
     }
-    return birthMonth;
+    return userMonth;
   }
 
-  var getBirthDate = function () {
-    var birthDate = "";
-    while (birthDate.length < 1 || birthDate.length > 2 || isNaN(birthDate)) {
-      birthDate = prompt("What day of the month were you born? (ex: 29)");
+  // This function finds the day the user provided.
+  var getUserDate = function () {
+    var userDate = "";
+    while (userDate.length < 1 || userDate.length > 2 || isNaN(userDate) || userDate > 31) {
+      userDate = prompt("What day of the month do you choose? (ex: 29)");
     }
-    return birthDate;
+    return userDate;
   }
 
-  alert("Think you can guess how many full moons there have been since you were born? Just answer a few questions, and give it a try!")
+  // Returns an array of the number of full moons since the chosen date and the chose date.
+  var getFullMoons = function() {
+    var chosenDate = new Date();
+    chosenDate.setFullYear(getUserYear());
+    chosenDate.setMonth(getUserMonth());
+    chosenDate.setDate(getUserDate());
+    var daysSinceChosen =  Math.floor((Date.parse(currentDate) - Date.parse(chosenDate)) / 86400000);
+    var fullMoons = Math.floor(daysSinceChosen / 29.530588853);
+    return [fullMoons, chosenDate];
+  }
 
+  var userGuess = function(fullMoonsArray) {
+    // Asks the user to guess how many full moons there have been since their chosen date. If they are off by more than 10 full moons, they are prompted to guess again.
+    var guess = prompt("Ok, take a guess: about how many full moons have there been since " + fullMoonsArray[1].getMonth() + "/" + fullMoonsArray[1].getDate() + "/" + fullMoonsArray[1].getFullYear() + "?");
+    while (guess > fullMoonsArray[0] + 10 || guess < fullMoonsArray[0] - 10) {
+      if (guess.length == 0) {
+        guess = prompt("Please pick a number. How many full moons have there been?");
+      } else if (guess > fullMoonsArray[0] + 10) {
+        guess = prompt("That's too high, guess again.");
+      } else if (guess < fullMoonsArray[0] - 10) {
+        guess = prompt("That's too low, guess again.");
+      }
+    }
+
+<<<<<<< HEAD
   var birthDate = new Date();
   var currentDate = new Date();
   birthDate.setFullYear(getBirthYear());
@@ -52,6 +80,20 @@
   }
   else {
     alert("That's close enough. We estimated " + fullMoons.toString() + ". Way to go!");
+    // Notifies the user if they were correct or the correct answer.
+    if (guess == fullMoonsArray[0]) {
+      alert("That's the same number we estimated! Way to go.");
+    } else {
+      alert("That's close enough. We estimated " + fullMoonsArray[0].toString() + ". Way to go!");
+    }
+  }
+
+  var game = confirm("Think you can guess how many full moons there have been since a chosen date? Maybe your birth date? Just answer a few questions, and give it a try!");
+
+  // Runs program while the user wants to play the game.
+  while (game) {
+    userGuess(getFullMoons());
+    game = confirm("Do you want to play again?");
   }
 
 </script>
