@@ -1,14 +1,12 @@
 <script type="text/javascript">
   (function () {
-    var currentDate, getUserYear, getUserMonth, getFullMoons, userGuess, gamePlay;
-
-    currentDate = new Date();
+    var getUserYear, getUserMonth, getFullMoons, userGuess, gamePlay;
 
     //Prompts the user to enter a year, checks it is correctly formatted and not in the future.
-    getUserYear = function () {
+    getUserYear = function (currentDate) {
       var userYear;
       userYear =  "";
-      while (userYear.length != 4 || isNaN(userYear) || userYear > currentDate.getFullYear()) {
+      while (userYear.length != 4 || isNaN(userYear)) {
         userYear = prompt("What year do you choose? (ex: 1989)");
       }
       return userYear;
@@ -35,12 +33,18 @@
     }
 
     //Returns an array of the number of full moons since the chosen date, and the chose date.
-    getFullMoons = function() {
+    getFullMoons = function(currentDate) {
       var chosenDate, daysSinceChosen, fullMoons;
       chosenDate = new Date();
-      chosenDate.setFullYear(getUserYear());
-      chosenDate.setMonth(getUserMonth());
-      chosenDate.setDate(getUserDate());
+      //Keeps asking for a date until the user selects a date from the past.
+      while (!compareDates(chosenDate,currentDate)) {
+        chosenDate.setFullYear(getUserYear());
+        chosenDate.setMonth(getUserMonth());
+        chosenDate.setDate(getUserDate());
+        if (!compareDates(chosenDate,currentDate)) {
+          alert("You have to choose a date in the past. Try again.")
+        }
+      }
       daysSinceChosen =  Math.floor((Date.parse(currentDate) - Date.parse(chosenDate)) / 86400000);
       fullMoons = Math.floor(daysSinceChosen / 29.530588853);
       return [fullMoons, chosenDate];
@@ -68,13 +72,24 @@
       }
     }
 
+
+    //Compares chosenDate with currentDate, returns true if chosenDate is in the past, false if it is either the current date or the future.
+    compareDates = function (chosenDate, currentDate) {
+      if ((Date.parse(currentDate) - Date.parse(chosenDate)) <= 0) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
     //Handles game play, first confirming that a player wants to play and then handling replays
     gamePlay = function() {
-      var game;
+      var game, currentDate;
+      currentDate = new Date();
       game = confirm("Think you can guess how many full moons there have been since a chosen date? Maybe your birth date? Just answer a few questions, and give it a try!");
       // Runs program while the user wants to play the game.
       while (game) {
-        userGuess(getFullMoons());
+        userGuess(getFullMoons(currentDate));
         game = confirm("Do you want to try again, with another date?");
       }
     }
