@@ -1,7 +1,8 @@
 <script type="text/javascript">
+
   var currentDate = new Date();
 
-  // This function finds the year the user provided.
+  //Prompts the user to enter a year, checks it is correctly formatted and not in the future.
   var getUserYear = function () {
     var userYear =  "";
     while (userYear.length != 4 || isNaN(userYear) || userYear > currentDate.getFullYear()) {
@@ -10,7 +11,7 @@
     return userYear;
   }
 
-  // This function finds the month the user provided.
+  // Prompts the user to enter a month, checks it is correctly formatted and a possible month.
   var getUserMonth = function () {
     var userMonth = "";
     while (userMonth.length < 1 || userMonth.length > 2 || isNaN(userMonth) || userMonth > 12) {
@@ -19,7 +20,7 @@
     return userMonth;
   }
 
-  // This function finds the day the user provided.
+  //Prompts the user to enter a date, checks it is correctly formatted and a possible date.
   var getUserDate = function () {
     var userDate = "";
     while (userDate.length < 1 || userDate.length > 2 || isNaN(userDate) || userDate > 31) {
@@ -28,7 +29,7 @@
     return userDate;
   }
 
-  // Returns an array of the number of full moons since the chosen date and the chose date.
+  //Returns an array of the number of full moons since the chosen date, and the chose date.
   var getFullMoons = function() {
     var chosenDate = new Date();
     chosenDate.setFullYear(getUserYear());
@@ -39,6 +40,7 @@
     return [fullMoons, chosenDate];
   }
 
+  //Handles user guesses, checking if exact or close, taking the array of [fullMoons, chosenDate] as input.
   var userGuess = function(fullMoonsArray) {
     // Asks the user to guess how many full moons there have been since their chosen date. If they are off by more than 10 full moons, they are prompted to guess again.
     var guess = prompt("Ok, take a guess: about how many full moons have there been since " + fullMoonsArray[1].getMonth() + "/" + fullMoonsArray[1].getDate() + "/" + fullMoonsArray[1].getFullYear() + "?");
@@ -51,36 +53,7 @@
         guess = prompt("That's too low, guess again.");
       }
     }
-
-<<<<<<< HEAD
-  var birthDate = new Date();
-  var currentDate = new Date();
-  birthDate.setFullYear(getBirthYear());
-  birthDate.setMonth(getBirthMonth());
-  birthDate.setDate(getBirthDate());
-
-  var daysAlive =  Math.floor((Date.parse(currentDate) - Date.parse(birthDate)) / 86400000);
-  var fullMoons = Math.floor(daysAlive / 29.530588853);
-  var guess = "";
-
-  while (guess > fullMoons + 10 || guess < fullMoons - 10) {
-    if (guess.length == 0) {
-      guess = prompt("Ok, take a guess: about how many full moons have there been since you were born?");
-    }
-    else if (guess > fullMoons + 10) {
-      guess = prompt("That's too high, guess again.");
-    }
-    else if (guess < fullMoons - 10) {
-      guess = prompt("That's too low, guess again.");
-    }
-  }
-
-  if (guess == fullMoons) {
-    alert("That's the same number we estimated! Way to go.");
-  }
-  else {
-    alert("That's close enough. We estimated " + fullMoons.toString() + ". Way to go!");
-    // Notifies the user if they were correct or the correct answer.
+    // Notifies the user if they were close, or got the exact answer estimated.
     if (guess == fullMoonsArray[0]) {
       alert("That's the same number we estimated! Way to go.");
     } else {
@@ -88,12 +61,16 @@
     }
   }
 
-  var game = confirm("Think you can guess how many full moons there have been since a chosen date? Maybe your birth date? Just answer a few questions, and give it a try!");
-
-  // Runs program while the user wants to play the game.
-  while (game) {
-    userGuess(getFullMoons());
-    game = confirm("Do you want to play again?");
+  //Handles game play, first confirming that a player wants to play and then handling replays
+  var gamePlay = function() {
+    var game = confirm("Think you can guess how many full moons there have been since a chosen date? Maybe your birth date? Just answer a few questions, and give it a try!");
+    // Runs program while the user wants to play the game.
+    while (game) {
+      userGuess(getFullMoons());
+      game = confirm("Do you want to play again?");
+    }
   }
+
+  gamePlay();
 
 </script>
