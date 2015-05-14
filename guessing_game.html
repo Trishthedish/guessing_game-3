@@ -1,122 +1,127 @@
-<script type="text/javascript">
-  //Constructs a User object with properties that store a chosen date, current date, and number of full moons in between.
-  function User () {
-    //Prompts the user to enter a year, checks it is correctly formatted and not in the future.
-    this.getUserYear = function () {
-      var userYear;
-      userYear =  "";
-      while (userYear.length != 4 || isNaN(userYear)) {
-        userYear = prompt("What year do you choose? (ex: 1989)");
-      }
-      return userYear;
-    };
+<!doctype html>
+<html>
+  <head>
+    <script type="text/javascript">
+      //Constructs a User object with properties that store a chosen date, current date, and number of full moons in between.
+      function User () {
+        //Prompts the user to enter a year, checks it is correctly formatted and not in the future.
+        this.getUserYear = function () {
+          var userYear;
+          userYear =  "";
+          while (userYear.length != 4 || isNaN(userYear)) {
+            userYear = prompt("What year do you choose? (ex: 1989)");
+          }
+          return userYear;
+        };
 
-    // Prompts the user to enter a month, checks it is correctly formatted and a possible month.
-    this.getUserMonth = function () {
-      var userMonth;
-      userMonth = "";
-      while (userMonth.length < 1 || userMonth.length > 2 || isNaN(userMonth) || userMonth > 11) {
-        userMonth = (prompt("What number month do you choose? (ex: 10)") - 1);
-      }
-      return userMonth;
-    };
+        // Prompts the user to enter a month, checks it is correctly formatted and a possible month.
+        this.getUserMonth = function () {
+          var userMonth;
+          userMonth = "";
+          while (userMonth.length < 1 || userMonth.length > 2 || isNaN(userMonth) || userMonth > 11) {
+            userMonth = (prompt("What number month do you choose? (ex: 10)") - 1);
+          }
+          return userMonth;
+        };
 
-    //Prompts the user to enter a date, checks it is correctly formatted and a possible date.
-    this.getUserDate = function () {
-      var userDate;
-      userDate = "";
-      while (userDate.length < 1 || userDate.length > 2 || isNaN(userDate) || userDate > 31) {
-        userDate = prompt("What day of the month do you choose? (ex: 29)");
-      }
-      return userDate;
-    };
+        //Prompts the user to enter a date, checks it is correctly formatted and a possible date.
+        this.getUserDate = function () {
+          var userDate;
+          userDate = "";
+          while (userDate.length < 1 || userDate.length > 2 || isNaN(userDate) || userDate > 31) {
+            userDate = prompt("What day of the month do you choose? (ex: 29)");
+          }
+          return userDate;
+        };
 
-    //Compares fullUserDate with currentDate, returns true if fullUserDate is in the past, false if it is either the current date or the future.
-    this.compareDates = function () {
-      if ((Date.parse(this.currentDate) - Date.parse(this.fullUserDate)) < 0) {
-        return false;
-      } else {
-        return true;
-      }
-    };
+        //Compares fullUserDate with currentDate, returns true if fullUserDate is in the past, false if it is either the current date or the future.
+        this.compareDates = function () {
+          if ((Date.parse(this.currentDate) - Date.parse(this.fullUserDate)) < 0) {
+            return false;
+          } else {
+            return true;
+          }
+        };
 
-    //Prompts the user to select a date, and checks to ensure that the date is in the past. Declares a currentDate Date() object after fullUserDate to ensure compareDates runs properly.
-    this.getFullUserDate = function() {
-      this.fullUserDate = new Date();
-      this.currentDate = new Date();
-      //Keeps asking for a year until the user selects a year in the past.
-      do {
-        this.fullUserDate.setFullYear(this.getUserYear());
-        if (!this.compareDates()) {
-          alert("You have to choose a year in the past. Try again.");
+        //Prompts the user to select a date, and checks to ensure that the date is in the past. Declares a currentDate Date() object after fullUserDate to ensure compareDates runs properly.
+        this.getFullUserDate = function() {
+          this.fullUserDate = new Date();
+          this.currentDate = new Date();
+          //Keeps asking for a year until the user selects a year in the past.
+          do {
+            this.fullUserDate.setFullYear(this.getUserYear());
+            if (!this.compareDates()) {
+              alert("You have to choose a year in the past. Try again.");
+            }
+          } while (!this.compareDates());
+          //Keeps asking for a month until the user selects a month in the past.
+          do {
+            this.fullUserDate.setMonth(this.getUserMonth());
+            if (!this.compareDates()) {
+              alert("You have to choose a month in the past. Try again.");
+            }
+          } while (!this.compareDates());
+          //Keeps asking for a date until the user selects a date in the past.
+          do {
+            this.fullUserDate.setDate(this.getUserDate());
+            if (!this.compareDates()) {
+              alert("You have to choose a date in the past. Try again.");
+            }
+          } while (!this.compareDates());
+        };
+
+        //Returns an array of the number of full moons since the chosen date, and the chose date.
+        this.getFullMoons = function() {
+          this.daysSinceChosen =  Math.floor((Date.parse(this.currentDate) - Date.parse(this.fullUserDate)) / 86400000);
+          this.fullMoons = Math.floor(this.daysSinceChosen / 29.530588853);
+        };
+
+        this.initialize = function() {
+          this.getFullUserDate();
+          this.getFullMoons();
+        };
+      }
+
+      //Handles user guesses, checking if exact or close, taking the array of [fullMoons, fullUserDate] as input.
+      var userGuess = function(user) {
+        var guess, guessArray;
+        // Asks the user to guess how many full moons there have been since their chosen date. If they are off by more than 10 full moons, they are prompted to guess again.
+        guess = prompt("Ok, take a guess: about how many full moons have there been since " + user.fullUserDate.toDateString() + "?");
+        guessArray = [];
+        while (guess > user.fullMoons + 10 || guess < user.fullMoons - 10) {
+          if (guess.length == 0) {
+            guess = prompt("Please pick a number. How many full moons have there been?");
+          } else if (guess > user.fullMoons + 5) {
+            guessArray.push(guess);
+            guess = prompt(guess + " is too high, try again.");
+          } else if (guess < user.fullMoons - 5) {
+            guessArray.push(guess);
+            guess = prompt(guess + " is too low, try again.");
+          }
         }
-      } while (!this.compareDates());
-      //Keeps asking for a month until the user selects a month in the past.
-      do {
-        this.fullUserDate.setMonth(this.getUserMonth());
-        if (!this.compareDates()) {
-          alert("You have to choose a month in the past. Try again.");
+        // Notifies the user if they were close, or got the exact answer estimated.
+        if (guess == user.fullMoons) {
+          alert(user.fullMoons.toString() + " is exactly what we estimated! Way to go.");
+        } else {
+          alert("That's close enough. We estimated " + user.fullMoons.toString() + ". Way to go!");
         }
-      } while (!this.compareDates());
-      //Keeps asking for a date until the user selects a date in the past.
-      do {
-        this.fullUserDate.setDate(this.getUserDate());
-        if (!this.compareDates()) {
-          alert("You have to choose a date in the past. Try again.");
+      };
+
+      //Handles game play, first confirming that a player wants to play, then generating a player object and handling replays
+      var playGame = function() {
+        var playing, user;
+        playing = confirm("Think you can guess how many full moons there have been since a chosen date? Maybe your birth date? Just answer a few questions, and give it a try!");
+        // Runs program while the user wants to play the game.
+        while (playing) {
+          user = new User();
+          user.initialize();
+          userGuess(user);
+          playing = confirm("Do you want to try again, with another date?");
         }
-      } while (!this.compareDates());
-    };
-
-    //Returns an array of the number of full moons since the chosen date, and the chose date.
-    this.getFullMoons = function() {
-      this.daysSinceChosen =  Math.floor((Date.parse(this.currentDate) - Date.parse(this.fullUserDate)) / 86400000);
-      this.fullMoons = Math.floor(this.daysSinceChosen / 29.530588853);
-    };
-
-    this.initialize = function() {
-      this.getFullUserDate();
-      this.getFullMoons();
-    };
-  }
-
-  //Handles user guesses, checking if exact or close, taking the array of [fullMoons, fullUserDate] as input.
-  var userGuess = function(user) {
-    var guess, guessArray;
-    // Asks the user to guess how many full moons there have been since their chosen date. If they are off by more than 10 full moons, they are prompted to guess again.
-    guess = prompt("Ok, take a guess: about how many full moons have there been since " + user.fullUserDate.toDateString() + "?");
-    guessArray = [];
-    while (guess > user.fullMoons + 10 || guess < user.fullMoons - 10) {
-      if (guess.length == 0) {
-        guess = prompt("Please pick a number. How many full moons have there been?");
-      } else if (guess > user.fullMoons + 5) {
-        guessArray.push(guess);
-        guess = prompt(guess + " is too high, try again.");
-      } else if (guess < user.fullMoons - 5) {
-        guessArray.push(guess);
-        guess = prompt(guess + " is too low, try again.");
       }
-    }
-    // Notifies the user if they were close, or got the exact answer estimated.
-    if (guess == user.fullMoons) {
-      alert(user.fullMoons.toString() + " is exactly what we estimated! Way to go.");
-    } else {
-      alert("That's close enough. We estimated " + user.fullMoons.toString() + ". Way to go!");
-    }
-  };
 
-  //Handles game play, first confirming that a player wants to play, then generating a player object and handling replays
-  var playGame = function() {
-    var playing, user;
-    playing = confirm("Think you can guess how many full moons there have been since a chosen date? Maybe your birth date? Just answer a few questions, and give it a try!");
-    // Runs program while the user wants to play the game.
-    while (playing) {
-      user = new User();
-      user.initialize();
-      userGuess(user);
-      playing = confirm("Do you want to try again, with another date?");
-    }
-  }
-
-  playGame();
-
-</script>
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
