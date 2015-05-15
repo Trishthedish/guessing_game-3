@@ -114,11 +114,11 @@
 
         //Constructs a Student() object, using an array [planet,demonym,yearLength,bodyPart] to set properties.
         //Students only have a certain patience level, which is also tracked.
-        function Student(students) {
-          this.planet = students[0];
-          this.demonym = students[1];
-          this.yearLength = students[2];
-          this.bodyPart = students[3];
+        function Student(studentArray) {
+          this.planet = studentArray[0];
+          this.demonym = studentArray[1];
+          this.yearLength = studentArray[2];
+          this.bodyPart = studentArray[3];
           this.patience = 12;
         }
 
@@ -207,7 +207,7 @@
         var raiseHands = function(students,historicalEvent) {
           var raisedHands;
           raisedHands = [];
-          for (var i = 0; i < students.length; i++) {
+          for (i in students) {
             if (getPlanetYears(students[i][2],historicalEvent) >= 1) {
               raisedHands.push(students[i]);
             }
@@ -223,31 +223,40 @@
           for (var i = 0; i < raisedHands.length; i++) {
             raisedHandsString += ((i + 1) + ". The " + raisedHands[i][1] + " student. \r\n")
           }
-          studentNumber = prompt("A number of students raise their various alien appendages. Who will you call on?\r\n" + raisedHandsString) - 1;
+          studentNumber = prompt("A number of students raise their various alien appendages. Who will you call on?\r\n\r\n" + raisedHandsString) - 1;
           return new Student(raisedHands[studentNumber]);
         }
 
         var playGame = function(students,historicalEvents) {
-          var player, historicalEvent, student, raisedHands;
+          var player, historicalEvent, studentsLeft, student, raisedHands;
+          //Makes a copy of the students object, so that students may be removed from the list of
+          //possible students as they leave, or as they get their question answered.
+          studentsLeft = new Object();
+          for (i in students) {
+              studentsLeft[i] = students[i];
+            }
           alert("Ten years ago, NASA secretly established communications with the intelligent alien lifeforms that had been hiding out in our solar system for years. After a decade of sending Earth’s best academic journals—via radio wave—into space, Solar System University’s board of trustees has allowed a satellite campus to be opened on earth. SSU Earth is opening its shiny metal doors today, and you’ve been selected as its first Professor of Terrestrial History.");
           player = new Player();
           player.init();
           historicalEvent = chooseCurriculum(historicalEvents);
           alert("You stand back to admire your work. The blackboard reads \"" + historicalEvent.name.toUpperCase() + ": " + historicalEvent.fullEventDate.toDateString() + ".\" As your students file in, you're ready to begin!");
-          raisedHands = raiseHands(students,historicalEvent);
-          student = chooseHand(raisedHands);
-          answerTheQuestion(historicalEvent,player,student);
+          while (Object.keys(studentsLeft).length > 0) {
+            raisedHands = raiseHands(studentsLeft,historicalEvent);
+            student = chooseHand(raisedHands);
+            delete studentsLeft[student.planet];
+            answerTheQuestion(historicalEvent,player,student);
+          }
         }
 
-        var students = [
-          ["Mercury","Mercurian",88.025,"pendulus, pebbly tail"],
-          ["Venus","Venusian",224.7,"heavy, scaly trunk"],
-          ["Mars","Martian",686.98,"delicate, dusky orange hand"],
-          ["Jupiter","Jovian",4329.63,"gaseous, indistinct arm-shaped-cloud"],
-          ["Saturn","Saturnian",10751.805,"bulbous, bright purple breathing sack"],
-          ["Uranus","Uranian",30667.3,"...well, I'm sure you can imagine"],
-          ["Neptune","Neptunian",60146.89,"sharp, sea green pincer"]
-        ];
+        var students = {
+          "Mercury": ["Mercury","Mercurian",88.025,"pendulus, pebbly tail"],
+          "Venus": ["Venus","Venusian",224.7,"heavy, scaly trunk"],
+          "Mars": ["Mars","Martian",686.98,"delicate, dusky orange hand"],
+          "Jupiter": ["Jupiter","Jovian",4329.63,"gaseous, indistinct arm-shaped-cloud"],
+          "Saturn": ["Saturn","Saturnian",10751.805,"bulbous, bright purple breathing sack"],
+          "Uranus": ["Uranus","Uranian",30667.3,"...well, I'm sure you can imagine"],
+          "Neptune": ["Neptune","Neptunian",60146.89,"sharp, sea green pincer"]
+        };
 
         var historicalEvents = [
           ["the start of World War II",[1939,8,1]],
