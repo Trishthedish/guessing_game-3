@@ -140,26 +140,21 @@
           planetYears = getPlanetYears(student.yearLength,historicalEvent);
           console.log(planetYears);
           answer = prompt("With " + player.timeLeftInClass + " minutes left in class, a " + student.demonym + " student raises its " + student.bodyPart + ". \"Professor " + player.name + ", Earth years are still confusing to me. About how many " + student.demonym + " years ago was " + historicalEvent.name + "?\"");
-
+          player.timeLeftInClass -= 1;
           //Loops runs while player's guess is not close enough, and there is still both class time and student patience.
-          while ((answer > planetYears + fuzziness || answer < planetYears - fuzziness) && player.timeLeftInClass > 0)  {
+          while ((answer > planetYears + fuzziness || answer < planetYears - fuzziness) && player.timeLeftInClass > 0 && student.patience > 0)  {
+            player.timeLeftInClass -= 1;
+            player.incorrectAnswers += 1;
+            student.patience -= 1;
+            annoyance = howAnnoyed(student);
             if (answer.length == 0) {
-              player.timeLeftInClass -= 1;
-              player.incorrectAnswers += 1;
-              student.patience -= 1;
-              answer = prompt("The " + student.demonym + " student looks inquisitively up at you—or at least you think it does. \r\n\r\nThere are only " + player.timeLeftInClass + " minutes left in class.");
+              answer = prompt("The " + student.demonym + " student looks inquisitively up at you—or at least you think it does. \r\n\r\nThere are only " + player.timeLeftInClass + " minutes left in class, " + annoyance);
             }
             else if (answer > planetYears + fuzziness) {
-              player.timeLeftInClass -= 1;
-              player.incorrectAnswers += 1;
-              student.patience -= 1;
-              answer = prompt("The " + student.demonym + " shakes what might be its head. \"I don't know, Professor " + player.name + ", " + answer + " sounds like too many years. How many was it really?\" \r\n\r\nThere are only " + player.timeLeftInClass + " minutes left in class, and the student seems to be getting annoyed.");
+              answer = prompt("The " + student.demonym + " shakes what might be its head. \"I don't know, Professor " + player.name + ", " + answer + " sounds like too many years. How many was it really?\" \r\n\r\nThere are only " + player.timeLeftInClass + " minutes left in class, " + annoyance);
             }
             else if (answer < planetYears - fuzziness) {
-              player.timeLeftInClass -= 1;
-              player.incorrectAnswers += 1;
-              student.patience -= 1;
-              answer = prompt("The " + student.demonym + " shakes what might be its head. \"I don't know, Professor " + player.name + ", " + answer + " doesn't sound like enough years. How many was it really?\" \r\n\r\nThere are only " + player.timeLeftInClass + " minutes left in class, and the student seems to be getting annoyed.");
+              answer = prompt("The " + student.demonym + " shakes what might be its head. \"I don't know, Professor " + player.name + ", " + answer + " doesn't sound like enough years. How many was it really?\" \r\n\r\nThere are only " + player.timeLeftInClass + " minutes left in class, " + annoyance);
             }
           }
 
@@ -168,7 +163,7 @@
             alert("There's the bell! Your students begin to gather up their strange belongings with their odd assortments of limbs.");
           }
           else if (student.patience == 0) {
-            alert("The " + student.demonym + " student has had enough. \"Professor " + player.name + ", if you can't answer my questions then I'm just gonna leave.\" It grabs its notebooks with its " + student.bodyPart + " and moves oddly from the room.")
+            alert("The " + student.demonym + " student has had enough. \"Professor " + player.name + ", if you can't answer my questions then I'm just gonna leave.\" It grabs its notebooks with its " + student.bodyPart + ", and moves strangely from the room.")
           }
           else {
             player.correctAnswers += 1;
@@ -182,14 +177,14 @@
           var useTextbook, textbookChapters, chosenChapter;
           useTextbook = confirm("You walk into your classroom, and see that a textbook is sitting on your desk. 'Earth History: Greatest Hits' reads its cover. Do you want to choose an event from the book? (If not, you can always make your own curriculum).");
           if (useTextbook) {
+            textbookChapters = "";
+            for (var i = 0; i < historicalEvents.length; i ++) {
+              textbookChapters += ((i + 1) + ". " + historicalEvents[i][0].toUpperCase() + "\r\n");
+            }
+            textbookChapters += "\r\nWhich chapter number looks good to you?"
             do {
-              textbookChapters = "";
-              for (var i = 0; i < historicalEvents.length; i ++) {
-                textbookChapters += ((i + 1) + ". " + historicalEvents[i][0].toUpperCase() + "\r\n");
-              }
-              textbookChapters += "\r\nWhich chapter number looks good to you?"
               chosenChapter = prompt(textbookChapters) - 1;
-            } while (chosenChapter.length == 0 || isNaN(chosenChapter) || chosenChapter >= historicalEvents.length);
+            } while (chosenChapter >= historicalEvents.length || !(chosenChapter >= 0));
 
             historicalEvent = new HistoricalEvent(historicalEvents[chosenChapter][0],historicalEvents[chosenChapter][1]);
             historicalEvent.initWithArray();
@@ -215,6 +210,20 @@
           return raisedHands;
         }
 
+        //Takes a Student() object, and returns a string based on how low their patience level
+        //is
+        var howAnnoyed = function(student) {
+          if (student.patience > 8) {
+            return "but the student still seems patient."
+          } else if (student.patience > 4) {
+            return "and the student seems to be getting annoyed."
+          } else if (student.patience > 0) {
+            return "and the student seems to be very annoyed."
+          } else {
+            return "and the student seems almost ready to walk out."
+          }
+        }
+
         //Takes a raisedHands array as argument, returns a Student() object of the student the player
         //selects
         var chooseHand = function(raisedHands) {
@@ -223,7 +232,9 @@
           for (var i = 0; i < raisedHands.length; i++) {
             raisedHandsString += ((i + 1) + ". The " + raisedHands[i][1] + " student. \r\n")
           }
-          studentNumber = prompt("A number of students raise their various alien appendages. Who will you call on?\r\n\r\n" + raisedHandsString) - 1;
+          do {
+            studentNumber = prompt("A number of students raise their various alien appendages. Who will you call on?\r\n\r\n" + raisedHandsString) - 1;
+          } while (!(studentNumber >= 0) || studentNumber >= raisedHands.length)
           return new Student(raisedHands[studentNumber]);
         }
 
