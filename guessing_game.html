@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <!-- script language="javascript" type="text/javascript" src="game_script.js"></script-->
     <script type="text/javascript">
       (function() {
         //Constructs a historical event, with name and eventDate properties. Contains methods that
@@ -41,7 +42,8 @@
           this.checkDateValid = function () {
             if ((Date.parse(this.currentDate) - Date.parse(this.fullEventDate)) < 0) {
               return false;
-            } else {
+            }
+            else {
               return true;
             }
           };
@@ -120,12 +122,12 @@
           this.patience = 12;
         }
 
-        //Takes Student() object and HistoricalEvent() objects as input, returns the number of planet
-        //years since the event rounded to 3 decimal places
-        var getPlanetYears = function (student,historicalEvent) {
+        //Takes studentYearLength as number and HistoricalEvent() objects as input, returns the
+        //number of planet years since the event rounded to 3 decimal places
+        var getPlanetYears = function (studentYearLength,historicalEvent) {
           var daysSince, yearsFloat;
           daysSince = Math.floor((Date.parse(historicalEvent.currentDate) - Date.parse(historicalEvent.fullEventDate)) / 86400000);
-          yearsFloat = daysSince / student.yearLength;
+          yearsFloat = daysSince / studentYearLength;
           return yearsFloat;
         }
 
@@ -133,10 +135,9 @@
         //incrementing correctAnswers and incorrectAnswers stored in the Player() object.
         var answerTheQuestion = function (historicalEvent,player,student) {
           var planetYears, answer, fuzziness;
-
           //fuzziness is the range allowed to be accepted as a correct answer, to be adjusted later with an algorithm.
           fuzziness = 1;
-          planetYears = getPlanetYears(student,historicalEvent);
+          planetYears = getPlanetYears(student.yearLength,historicalEvent);
           console.log(planetYears);
           answer = prompt("With " + player.timeLeftInClass + " minutes left in class, a " + student.demonym + " student raises its " + student.bodyPart + ". \"Professor " + player.name + ", Earth years are still confusing to me. About how many " + student.demonym + " years ago was " + historicalEvent.name + "?\"");
 
@@ -147,12 +148,14 @@
               player.incorrectAnswers += 1;
               student.patience -= 1;
               answer = prompt("The " + student.demonym + " student looks inquisitively up at you—or at least you think it does. \r\n\r\nThere are only " + player.timeLeftInClass + " minutes left in class.");
-            } else if (answer > planetYears + fuzziness) {
+            }
+            else if (answer > planetYears + fuzziness) {
               player.timeLeftInClass -= 1;
               player.incorrectAnswers += 1;
               student.patience -= 1;
               answer = prompt("The " + student.demonym + " shakes what might be its head. \"I don't know, Professor " + player.name + ", " + answer + " sounds like too many years. How many was it really?\" \r\n\r\nThere are only " + player.timeLeftInClass + " minutes left in class, and the student seems to be getting annoyed.");
-            } else if (answer < planetYears - fuzziness) {
+            }
+            else if (answer < planetYears - fuzziness) {
               player.timeLeftInClass -= 1;
               player.incorrectAnswers += 1;
               student.patience -= 1;
@@ -163,9 +166,11 @@
           //Checks if answer was close enough, if time ran out, or if patience ran out.
           if (player.timeLeftInClass == 0) {
             alert("There's the bell! Your students begin to gather up their strange belongings with their odd assortments of limbs.");
-          } else if (student.patience == 0) {
+          }
+          else if (student.patience == 0) {
             alert("The " + student.demonym + " student has had enough. \"Professor " + player.name + ", if you can't answer my questions then I'm just gonna leave.\" It grabs its notebooks with its " + student.bodyPart + " and moves oddly from the room.")
-          } else {
+          }
+          else {
             player.correctAnswers += 1;
             alert("The " + student.demonym + " student appears to nod. \"That makes sense, Professor " + player.name + ". Thanks!\"");
           }
@@ -189,18 +194,56 @@
             historicalEvent = new HistoricalEvent(historicalEvents[chosenChapter][0],historicalEvents[chosenChapter][1]);
             historicalEvent.initWithArray();
             return historicalEvent;
-          } else {
+          }
+          else {
             historicalEvent = new HistoricalEvent();
             historicalEvent.initWithoutArray();
             return historicalEvent;
           }
         }
 
+        //Takes students array, and selected HistoricalEvent() object, and returns a raisedHands array
+        //of students whose planets have had at least 1 year since the event.
+        var raiseHands = function(students,historicalEvent) {
+          var raisedHands;
+          raisedHands = [];
+          for (var i = 0; i < students.length; i++) {
+            if (getPlanetYears(students[i][2],historicalEvent) >= 1) {
+              raisedHands.push(students[i]);
+            }
+          }
+          return raisedHands;
+        }
+
+        //Takes a raisedHands array as argument, returns a Student() object of the student the player
+        //selects
+        var chooseHand = function(raisedHands) {
+          var raisedHandsString, studentNumber;
+          raisedHandsString = "";
+          for (var i = 0; i < raisedHands.length; i++) {
+            raisedHandsString += ((i + 1) + ". The " + raisedHands[i][1] + " student. \r\n")
+          }
+          studentNumber = prompt("A number of students raise their various alien appendages. Who will you call on?\r\n" + raisedHandsString) - 1;
+          return new Student(raisedHands[studentNumber]);
+        }
+
+        var playGame = function(students,historicalEvents) {
+          var player, historicalEvent, student, raisedHands;
+          alert("Ten years ago, NASA secretly established communications with the intelligent alien lifeforms that had been hiding out in our solar system for years. After a decade of sending Earth’s best academic journals—via radio wave—into space, Solar System University’s board of trustees has allowed a satellite campus to be opened on earth. SSU Earth is opening its shiny metal doors today, and you’ve been selected as its first Professor of Terrestrial History.");
+          player = new Player();
+          player.init();
+          historicalEvent = chooseCurriculum(historicalEvents);
+          alert("You stand back to admire your work. The blackboard reads \"" + historicalEvent.name.toUpperCase() + ": " + historicalEvent.fullEventDate.toDateString() + ".\" As your students file in, you're ready to begin!");
+          raisedHands = raiseHands(students,historicalEvent);
+          student = chooseHand(raisedHands);
+          answerTheQuestion(historicalEvent,player,student);
+        }
+
         var students = [
           ["Mercury","Mercurian",88.025,"pendulus, pebbly tail"],
           ["Venus","Venusian",224.7,"heavy, scaly trunk"],
           ["Mars","Martian",686.98,"delicate, dusky orange hand"],
-          ["Jupiter","Jovian year",4329.63,"gaseous, indistinct arm-shaped-cloud"],
+          ["Jupiter","Jovian",4329.63,"gaseous, indistinct arm-shaped-cloud"],
           ["Saturn","Saturnian",10751.805,"bulbous, bright purple breathing sack"],
           ["Uranus","Uranian",30667.3,"...well, I'm sure you can imagine"],
           ["Neptune","Neptunian",60146.89,"sharp, sea green pincer"]
@@ -211,17 +254,7 @@
           ["the fall of Constantinople",[1453,3,29]]
         ];
 
-        var playGame = function(students,historicalEvents) {
-          alert("Ten years ago, NASA secretly established communications with the intelligent alien lifeforms that had been hiding out in our solar system for years. After a decade of sending Earth’s best academic journals—via radio wave—into space, Solar System University’s board of trustees has allowed a satellite campus to be opened on earth. SSU Earth is opening its shiny metal doors today, and you’ve been selected as its first Professor of Terrestrial History.");
-          player = new Player();
-          player.init();
-          historicalEvent = chooseCurriculum(historicalEvents);
-          alert("You stand back to admire your work. The blackboard reads \"" + historicalEvent.name.toUpperCase() + ": " + historicalEvent.fullEventDate.toDateString() + ".\" As your students file in, you're ready to begin!");
-          student = new Student(students[2]);
-          answerTheQuestion(historicalEvent,player,student);
-        }
-
-        //playGame(students,historicalEvents);
+        playGame(students,historicalEvents);
 
       })();
     </script>
@@ -233,21 +266,40 @@
     <main>
       <!--Blackboard text-->
       <h2>THE FALL OF CONSTANTINOPLE: April 29 1453</h2>
-      <img href="" alt="Mercurian Student">
-      <img href="" alt="Venusian Student">
-      <img href="" alt="Martian Student">
-      <img href="" alt="Jovian Student">
-      <img href="" alt="Saturnian Student">
-      <img href="" alt="Uranian Student">
-      <img href="" alt="Neptunian Student">
+      <figure>
+        <img href="" alt="Mercurian Student">
+        <figcaption>Mercurian Student</figcaption>
+      </figure>
+      <figure>
+        <img href="" alt="Venusian Student">
+        <figcaption>Venusian Student</figcaption>
+      </figure>
+      <figure>
+        <img href="" alt="Martian Student">
+        <figcaption>Martian Student</figcaption>
+      </figure>
+      <figure>
+        <img href="" alt="Jovian Student">
+        <figcaption>Jovian Student</figcaption>
+      </figure>
+      <figure>
+        <img href="" alt="Saturnian Student">
+        <figcaption>Saturnian Student</figcaption>
+      </figure>
+      <figure>
+        <img href="" alt="Uranian Student">
+        <figcaption>Uranian Student</figcaption>
+      </figure>
+      <figure>
+        <img href="" alt="Neptunian Student">
+        <figcaption>Neptunian Student</figcaption>
+      </figure>
       <br>
       <br>
-      <label for="alienYears">Martian Years</labels>
-      <input name="alienYears" type="number" placeholder="Martian Years">
-    </main>
-    <footer>
+      <label for="alienYears">(Planet) Years</labels>
+      <input name="alienYears" type="number" placeholder="(Planet) Years">
       <hr>
-      <h3>Teacher Evaluation</h3>
+      <h2>Teacher Evaluation</h2>
       <ul>
         <li>
           Class Time:
@@ -264,6 +316,9 @@
           Incorrect Answers: <div>11</div>
         </li>
       </ul>
+    </main>
+    <footer>
+      <p>Game brought to you by Colin Coltrera</p>
     </footer>
   </body>
 </html>
