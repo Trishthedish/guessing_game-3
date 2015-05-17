@@ -9,9 +9,10 @@
       <h1>SSU : EARTH</h1>
     </header>
     <main>
+      <hr>
       <section id="letter">
         <p>
-          Dear Professor
+          Dear Professor,
         </p>
         <p id="letter_body">
           Ten years ago, NASA secretly established communications with the intelligent alien
@@ -30,23 +31,61 @@
         <button class="button" id="accept_position">Accept Position</button>
       </section>
       <section id="alien_professor">
-        <p class="naration">
-          Outside your classroom, one of your new colleagues stretches out its tentacly
-          arm to shake your pink, squishy one.
-        </p>
-        <p class="speech">
-          "Hi, I'm Professor ßåxtëµ. Welcome to the faculty! What was your name again?"
-        </p>
-        <input id="name_input" type="text" placeholder="Name">
-        <button class="button" id="name_button">"Nice to meet you, too."</button>
+        <article id="professor_question">
+          <p class="naration">
+            Welcome to SSUE!
+          </p>
+          <p class="narration">
+            Outside your classroom, one of your new colleagues stretches out its tentacly
+            arm to shake your pink, squishy one.
+          </p>
+          <p class="speech">
+            "Hi, I'm Professor ßåxtëµ. Welcome to the faculty! What was your name again?"
+          </p>
+          <form onsubmit="event.preventDefault()">
+            <input id="name_input" type="text" placeholder="Name">
+            <button class="button" id="name_button">"Nice to meet you."</button>
+          </form>
+        </article>
+        <article id="professor_greeting">
+          <p class="speech">
+          "Nice to meet you, too, Professor <span class="player_name"></span>."
+          </p>
+          <button class="button" id="enter_classroom">Continue into your classroom</button>
+        </article>
       </section>
       <section id="textbook">
+        <p class="narration">
+          You walk into your classroom, and see a textbook is sitting on your desk.
+          <em>Earth History: Greatest Hits</em> reads its cover. What will you teach your first
+          class?
+        </p>
         <ol id="textbook_list">
-          <li></li>
+          <li>
+            <button class="textbook_buttom" id="custom_event_button">MAKE YOUR OWN EVENT</button>
+            <form id="custom_event_form" onsubmit="event.preventDefault()">
+              <input id="event_name" type="text" placeholder="Event Name">
+              <ul>
+                <li>
+                  <input id="event_month" type="text" placeholder="Event Month"> / <input id="event_date" type="text" placeholder="Event Date"> / <input id="event_year" type="text" placeholder="Event Year"> <button class="button" id="set_custom_date">Set Event</button>
+                </li>
+              </ul>
+            </form>
+          </li>
         </ol>
+        <span id="date_guidance"></span>
+      </section>
+      <section id="classroom">
       </section>
     </main>
     <footer>
+      <hr>
+      <h2>Teacher Evaluation</h2>
+      <ul id="teacher_eval">
+        <li>Name: <span class="player_name"></span></li>
+        <li>Satisfied Students: <span class="satisfied_students"></span></li>
+        <li>Dissatisfied Students: <span class="dissatisfied_students"></span></li>
+      </ul>
     </footer>
   </body>
 </html>
