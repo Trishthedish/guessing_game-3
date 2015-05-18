@@ -48,8 +48,11 @@
           </form>
         </div>
         <div id="professor_greeting">
+          <p class="narration">
+            Professor ßåxtëµ's face contorts into what you hope is a smile, and it pats you on the back.
+          </p>
           <p class="speech">
-          "Nice to meet you, too, Professor <span class="player_name"></span>."
+          "Nice to meet you, too, Professor <span class="player_name"></span>. I'm sure we'll be fast friends"
           </p>
           <button class="button" id="enter_classroom">Continue into your classroom</button>
         </div>
@@ -62,12 +65,15 @@
         </p>
         <ol id="textbook_list">
           <li>
-            <button class="textbook_buttom" id="custom_event_button">MAKE YOUR OWN EVENT</button>
+            <button class="textbook_button" id="custom_event_button">MAKE YOUR OWN EVENT</button>
+            <ul id="placeholder_date">
+              <li>? / ? / ?</li>
+            </ul>
             <form id="custom_event_form" onsubmit="event.preventDefault()">
               <input id="event_name" type="text" placeholder="Event Name">
               <ul>
                 <li>
-                  <input id="event_month" type="text" placeholder="Event Month"> / <input id="event_date" type="text" placeholder="Event Date"> / <input id="event_year" type="text" placeholder="Event Year"> <button class="button" id="set_custom_date">Set Event</button>
+                  <input id="event_month" type="text" placeholder="Event Month"> / <input id="event_date" type="text" placeholder="Event Date"> / <input id="event_year" type="text" placeholder="Event Year"> <button class="textbook_button" id="set_custom_date">Set Event</button>
                 </li>
               </ul>
             </form>
@@ -76,39 +82,48 @@
         <span id="date_guidance"></span>
       </section>
       <section id="classroom">
+        <div id="blackboard">
+          <span id="blackboard_text"></span>
+        </div>
+        <div><strong>Class Time Remaining: </strong><progress max="45" id="class_time"></progress></div>
         <div id="students">
-          <figure id="Mercury">
-            <img href="" alt="Mercurian Student">
+          <p class="narration" id="gameplay_narration"></p>
+          <p class="speech" id="student_speech"></p>
+          <figure id="mercurian">
+            <img src="" alt="Mercurian Student">
             <figcaption>Mercurian Student</figcaption>
           </figure>
-          <figure id="Venus">
-            <img href="" alt="Venusian Student">
+          <figure id="venusian">
+            <img src="" alt="Venusian Student">
             <figcaption>Venusian Student</figcaption>
           </figure>
-          <figure id="Mars">
-            <img href="" alt="Martian Student">
+          <figure id="martian">
+            <img src="" alt="Martian Student">
             <figcaption>Martian Student</figcaption>
           </figure>
-          <figure id="Jupiter">
-            <img href="" alt="Jovian Student">
+          <figure id="jovian">
+            <img src="" alt="Jovian Student">
             <figcaption>Jovian Student</figcaption>
           </figure>
-          <figure id="Saturn">
-            <img href="" alt="Saturnian Student">
+          <figure id="saturnian">
+            <img src="" alt="Saturnian Student">
             <figcaption>Saturnian Student</figcaption>
           </figure>
-          <figure id="Uranus">
-            <img href="" alt="Uranian Student">
+          <figure id="uranian">
+            <img src="" alt="Uranian Student">
             <figcaption>Uranian Student</figcaption>
           </figure>
-          <figure id="Neptune">
-            <img href="" alt="Neptunian Student">
+          <figure id="neptunian">
+            <img src="" alt="Neptunian Student">
             <figcaption>Neptunian Student</figcaption>
           </figure>
+          <div class="speech" id="student_speech"></div>
         </div>
-        <div id="blackboard">
-        </div>
-        <div id="player_reply">
+        <div id="player_answer">
+          <form onsubmit="event.preventDefault()">
+            <span class="speech">"It's been about <input id="answer_input" type="number" placeholder="Years"> since," </span>
+            <button class="button" id="answer_button">you reply.</button>
+          </form>
         </div>
       </section>
     </main>
@@ -116,9 +131,9 @@
       <hr>
       <h2>Teacher Evaluation</h2>
       <ul id="teacher_eval">
-        <li>Name: <span class="player_name"></span></li>
-        <li>Satisfied Students: <span class="satisfied_students"></span></li>
-        <li>Dissatisfied Students: <span class="dissatisfied_students"></span></li>
+        <li><strong>Name:</strong> <span class="player_name"></span></li>
+        <li><strong>Satisfied Students:</strong> <span id="satisfied_students"></span></li>
+        <li><strong>Dissatisfied Students:</strong> <span id="dissatisfied_students"></span></li>
       </ul>
     </footer>
   </body>
