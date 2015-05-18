@@ -1,5 +1,5 @@
 window.onload = function() {
-  var letter, alienProfessor, professorQuestion, professorGreeting, textbook, customEventButton, placeholderDate, customEventForm, textbookList, dateGuidance, player, historicalEvent, classroom, footer, satisfiedStudentsCounter, dissatisfiedStudentsCounter, mercurian, venusian, martian, jovian, saturnian, uranian, neptunian, raisedHands, classTimer, blackboardText, gameplayNarration, student, playerAnswer, studentSpeech, answerButton, answerInput;
+  var letter, alienProfessor, professorQuestion, professorGreeting, textbook, customEventButton, placeholderDate, customEventForm, textbookList, dateGuidance, player, historicalEvent, classroom, footer, satisfiedStudentsCounter, dissatisfiedStudentsCounter, mercurian, venusian, martian, jovian, saturnian, uranian, neptunian, raisedHands, classTimer, blackboardText, gameplayNarration, student, playerAnswer, studentSpeech, answerButton, answerInput, farewell, farewellButton;
 
   //Constructs a Player() object, which stores the name, correct and incorrect answers, and class
   //time remaining.
@@ -142,8 +142,8 @@ window.onload = function() {
       studentFig.onclick = function() {
         var patienceText, patienceBar;
         student = new Student(students[this.id]);
-        patienceText = document.createTextNode("Patience: ")
-        patienceBar = document.createElement("progress")
+        patienceText = document.createTextNode("Patience: ");
+        patienceBar = document.createElement("progress");
         patienceBar.setAttribute("max","12");
         patienceBar.id = "patience_bar";
         this.appendChild(patienceText);
@@ -170,30 +170,52 @@ window.onload = function() {
     answerButton.onclick = function() {
       //fuzziness is the range allowed to be accepted as a correct answer, to be adjusted later with an algorithm.
       fuzziness = 1;
-      if (player.classTime > 0 && student.patience > 0)  {
-        console.log(player.classTime);
-        console.log(student.patience);
-        answer = answerInput.value;
+      answer = answerInput.value;
+      if (player.classTime > 0 && student.patience > 0 && !isNaN(answer) && answer.length > 0)  {
         player.classTime -= 1;
         if (answer > planetYears + fuzziness) {
           student.patience -= 1;
-          gameplayNarration.textContent  = "The " + student.demonym + " shakes what might be its head.";
+          gameplayNarration.textContent  = "The " + student.demonym + " shakes its " + student.bodyPart + ".";
           studentSpeech.textContent = "\"I don't know, Professor " + player.name + ", " + answer + " sounds like too many years. How many was it really?\"";
           setTheBoard();
         }
         else if (answer < planetYears - fuzziness) {
           student.patience -= 1;
-          gameplayNarration.textContent  = "The " + student.demonym + " shakes what might be its head.";
+          gameplayNarration.textContent  = "The " + student.demonym + " shakes its " + student.bodyPart + ".";
           studentSpeech.textContent = "\"I don't know, Professor " + player.name + ", " + answer + " doesn't sound like enough years. How many was it really?\"";
           setTheBoard();
-        } else {
+        }
+        else {
           gameplayNarration.textContent  = "The " + student.demonym + " student appears to nod.";
           studentSpeech.textContent = "\"That makes sense, Professor " + player.name + ". Thanks!\"";
           player.satisfiedStudents += 1;
-          delete raisedHands[student.demonym.toLowerCase()];
-          console.table(raisedHands);
+          var patienceBar = document.getElementById("patience_bar");
+          var contanerEl = patienceBar.parentNode;
+          contanerEl.removeChild(patienceBar);
+          contanerEl.removeChild(contanerEl.lastChild);
           setTheBoard();
+          playerAnswer.style.display = "none";
+          farewell.style.display = "";
         }
+      }
+      else if (player.classTime == 0) {
+        gameplayNarration.textContent  = "There's the bell! Your students begin to gather up their strange belongings with their odd assortments of limbs. Good first class! Remember to collect your Teacher Evaluation before you go home.";
+        studentSpeech.textContent = "";
+        raisedHands = {};
+        setTheBoard();
+        playerAnswer.style.display = "none";
+      }
+      else if (student.patience == 0) {
+        gameplayNarration.textContent  = "The " + student.demonym + " student has had enough. It grabs its notebooks with its " + student.bodyPart + ", and moves strangely from the room.";
+        studentSpeech.textContent = "\"Professor " + player.name + ", if you can't answer my questions then I'm just gonna leave.\"";
+        player.dissatisfiedStudents += 1;
+        var patienceBar = document.getElementById("patience_bar");
+        var contanerEl = patienceBar.parentNode;
+        contanerEl.removeChild(patienceBar);
+        contanerEl.removeChild(contanerEl.lastChild);
+        setTheBoard();
+        playerAnswer.style.display = "none";
+        farewell.style.display = "";
       }
       //Checks if answer was close enough, if time ran out, or if patience ran out.
       // if (player.classTime == 0) {
@@ -201,10 +223,6 @@ window.onload = function() {
       // }
       // else if (student.patience == 0) {
       //   alert("The " + student.demonym + " student has had enough. \"Professor " + player.name + ", if you can't answer my questions then I'm just gonna leave.\" It grabs its notebooks with its " + student.bodyPart + ", and moves strangely from the room.")
-      // }
-      // else {
-      //   player.correctAnswers += 1;
-      //   alert("The " + student.demonym + " student appears to nod. \"That makes sense, Professor " + player.name + ". Thanks!\"");
       // }
 
 
@@ -255,6 +273,8 @@ window.onload = function() {
   studentSpeech = document.getElementById("student_speech");
   answerButton = document.getElementById("answer_button");
   answerInput = document.getElementById("answer_input");
+  farewell = document.getElementById("farewell");
+  farewellButton = document.getElementById("farewell_button");
 
   //Hides sections of the HTML doc, so they can be shown later.
   alienProfessor.style.display = "none";
@@ -271,6 +291,7 @@ window.onload = function() {
   uranian.style.display = "none";
   neptunian.style.display = "none";
   playerAnswer.style.display = "none";
+  farewell.style.display = "none";
 
   //On "Accept Position" button press, hides #letter, and shows #alien_professor.
   document.getElementById("accept_position").onclick = function() {
@@ -305,13 +326,14 @@ window.onload = function() {
   document.getElementById("set_custom_date").onclick = function() {
     if (document.getElementById("event_name").value.length > 0 && document.getElementById("event_year").value.length == 4 && !isNaN(document.getElementById("event_year").value) && document.getElementById("event_month").value.length > 0 && document.getElementById("event_month").value.length <= 2 && document.getElementById("event_month").value <= 12 && !isNaN(document.getElementById("event_month").value) && document.getElementById("event_date").value.length > 0 && document.getElementById("event_date").value.length <= 2 && document.getElementById("event_date").value <= 31 && !isNaN(document.getElementById("event_date").value)) {
       historicalEvent = new HistoricalEvent([document.getElementById("event_name").value, document.getElementById("event_year").value, document.getElementById("event_month").value - 1, document.getElementById("event_date").value])
-      console.log(historicalEvent.fullEventDate.toDateString());
       if (historicalEvent.checkDateValid()) {
         textbook.style.display = "none";
         classroom.style.display = "";
         footer.style.display = "";
         raisedHands = raiseHands(students,historicalEvent);
         setTheBoard();
+        blackboardText.textContent = historicalEvent.name.toUpperCase() + " (" + historicalEvent.fullEventDate.toDateString().substring(4) + ")";
+        chooseStudent();
 
       } else if (!historicalEvent.checkDateValid()) {
         dateGuidance.textContent = "You’re teaching a History class, not a Futurology class—that’s Prof. Glaxbørk’s department. Choose a date in the past.";
@@ -323,6 +345,13 @@ window.onload = function() {
     else {
       dateGuidance.textContent = "What kind of Terrestrial History professor doesn't know the date of an historical event?"
     }
+  }
+
+  farewellButton.onclick = function() {
+    delete raisedHands[student.demonym.toLowerCase()];
+    setTheBoard();
+    farewell.style.display = "none";
+    chooseStudent();
   }
 
   var historicalEvents = [
