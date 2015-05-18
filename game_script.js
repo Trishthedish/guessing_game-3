@@ -217,17 +217,7 @@ window.onload = function() {
         playerAnswer.style.display = "none";
         farewell.style.display = "";
       }
-      //Checks if answer was close enough, if time ran out, or if patience ran out.
-      // if (player.classTime == 0) {
-      //   alert("There's the bell! Your students begin to gather up their strange belongings with their odd assortments of limbs.");
-      // }
-      // else if (student.patience == 0) {
-      //   alert("The " + student.demonym + " student has had enough. \"Professor " + player.name + ", if you can't answer my questions then I'm just gonna leave.\" It grabs its notebooks with its " + student.bodyPart + ", and moves strangely from the room.")
-      // }
-
-
     }
-
   }
 
   //Takes a Student() object, and returns a string based on how low their patience level
@@ -349,9 +339,18 @@ window.onload = function() {
 
   farewellButton.onclick = function() {
     delete raisedHands[student.demonym.toLowerCase()];
-    setTheBoard();
-    farewell.style.display = "none";
-    chooseStudent();
+    if (Object.keys(raisedHands).length == 0) {
+      gameplayNarration.textContent  = "All of your students have left, either satisfied or in a huff. Good first class! Remember to collect your Teacher Evaluation before you go home.";
+      studentSpeech.textContent = "";
+      displayStudents(raisedHands);
+      playerAnswer.style.display = "none";
+      farewell.style.display = "none";
+    }
+    else {
+      setTheBoard();
+      farewell.style.display = "none";
+      chooseStudent();
+    }
   }
 
   var historicalEvents = [
